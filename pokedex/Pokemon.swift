@@ -27,6 +27,13 @@ class Pokemon {
     private var _description: String!
     private var _type1: String!
     private var _type2 =  ""
+    private var _evolutionID = ""
+    private var _evolutionName = ""
+    private var _evolutionLvl = ""
+    private var _evolutionID2 = ""
+    private var _evolutionName2 = ""
+    private var _evolutionLvl2 = ""
+    
     
     var name: String {
         return _name
@@ -64,6 +71,15 @@ class Pokemon {
         return _description
     }
     
+    var evolutions: Array<String>{
+        return [_evolutionLvl, _evolutionID, _evolutionName]
+    }
+    
+    var evolution2: Array<String>{
+        return [_evolutionLvl2, _evolutionID2, _evolutionName2]
+    }
+    
+    
     init(name: String, pokedexID: Int){
         self._name = name
         self._pokedexID = pokedexID
@@ -71,6 +87,8 @@ class Pokemon {
     }
     
     // Downloading data from internet using POKEAPI
+    
+    
     
     func downloadPokemonDetails(completed: (poop: String) -> ()){
         
@@ -80,10 +98,10 @@ class Pokemon {
             let result = response.result
             if let dict = result.value as? Dictionary<String, AnyObject>{
                 if let weight = dict["weight"] as? String{
-                    self._weight = weight
+                    self._weight = String(Double(weight)!/10)
                 }
                 if let height = dict["height"] as? String{
-                    self._height = height
+                    self._height = String(Double(height)!/10)
                 }
                 if let attack = dict["attack"] as? Int{
                     self._attack = String(attack)
@@ -126,7 +144,68 @@ class Pokemon {
                     }
                 }
                 
+                
+                if let evolutions = dict["evolutions"] as? [Dictionary<String, AnyObject>]
+                    where evolutions.count > 0 {
+                        if let to = evolutions[0]["to"] as? String{
+                            
+                            
+                            if to.rangeOfString("mega") == nil{
+                                
+                                if let uri = evolutions[0]["resource_uri"] as? String {
+                                    let newStr = uri.stringByReplacingOccurrencesOfString("/api/v1/pokemon/", withString: "")
+                                    let num = newStr.stringByReplacingOccurrencesOfString("/", withString: "")
+                                    
+                                    self._evolutionID = num
+                                    self._evolutionName = to
+                                    
+                                    if let lvl = evolutions[0]["level"] as? Int{
+                                        self._evolutionLvl = String(lvl)
+                                        
+                                        
+                                    }
+                                    
+                                    let newPoke = "\(URL_BASE)\(uri)"
+                                    
+                                    print(newPoke)
+                                    Alamofire.request(.GET, NSURL(string: newPoke)!).responseJSON {
+                                        response in
+                                        
+                                        let result = response.result
+                                        if let dict = result.value as? Dictionary<String, AnyObject>{
+                                            if let evolution2 = dict["evolutions"] as? [Dictionary<String, AnyObject>] where evolution2.count > 0{
+                                                if let to2 = evolution2[0]["to"] as? String{
+                                                    if to2.rangeOfString("mega") == nil{
+                                                        if let uri2 = evolution2[0]["resource_uri"] as? String{
+                                                            let newStr2 = uri2.stringByReplacingOccurrencesOfString("/api/v1/pokemon/", withString: "")
+                                                            let num2 = newStr2.stringByReplacingOccurrencesOfString("/", withString: "")
+                                                            self._evolutionID2 = num2
+                                                            print(num2)
+                                                            print(to2)
+                                                            self._evolutionName2 = to2
+                                                            if let lvl = evolution2[0]["level"] as? Int{
+                                                                self._evolutionLvl2 = String(lvl)
+                                                            }
+                                                            
+                                                        }
+                                                        
+                                                    }
+                                                    
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                    
+                                }
+                                
+                            }
+                        }
+                }
+
             }
+            
+            
             
             completed(poop: "hi")
         }
