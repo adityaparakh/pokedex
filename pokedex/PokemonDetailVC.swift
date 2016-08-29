@@ -31,8 +31,8 @@ class PokemonDetailVC: UIViewController {
         print(self.pokemon.type1)
         
         if pokemon.type2 != ""{
-            type1.image = UIImage(named: pokemon.type2)
-            type2.image = UIImage(named: pokemon.type1)
+            type1.image = UIImage(named: pokemon.type1)
+            type2.image = UIImage(named: pokemon.type2)
         }
         else{
             typeONEONLYview.hidden = false

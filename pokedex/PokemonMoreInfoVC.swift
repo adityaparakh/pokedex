@@ -26,6 +26,13 @@ class PokemonMoreInfoViewController: UIViewController {
     @IBOutlet weak var twoEvolution: UIStackView!
     
     @IBOutlet weak var noevolution: UILabel!
+    @IBOutlet weak var nextEvolution: UIImageView!
+    @IBOutlet weak var nextEvolutionName: UILabel!
+    @IBOutlet weak var type1_two: UIImageView!
+    @IBOutlet weak var type2_two: UIImageView!
+    @IBOutlet weak var typeSingleSV: UIStackView!
+    @IBOutlet weak var typeDoubleSV: UIStackView!
+    @IBOutlet weak var type1_single: UIImageView!
     
     
     var pokemon: Pokemon!
@@ -44,26 +51,48 @@ class PokemonMoreInfoViewController: UIViewController {
         
         var one = false
         var two = false
+        print(pokemon.evolutions)
         if pokemon.evolutions[0] != "" {
             one = true
+            print("printing pokemon evol")
             print(pokemon.evolutions[1])
+            print("pokemon name")
+            print(pokemon.evolutions[2].capitalizedString)
             if pokemon.evolution2[0] != "" {
                 two = true
                 print(pokemon.evolution2[1])
             }
         }
         
+        if pokemon.type2 != ""{
+            type1_two.image = UIImage(named: pokemon.type1)
+            type2_two.image = UIImage(named: pokemon.type2)        }
+        else{
+            typeSingleSV.hidden = false
+            typeDoubleSV.hidden = true
+            type1_single.image = UIImage(named: pokemon.type1)
+
+        }
+
+        
+        
+        
         if one && two{
             firstEvol.image = UIImage(named: pokemon.evolutions[1])
             firstEvolName.text = pokemon.evolutions[2].capitalizedString
             secondEvol.image = UIImage(named: pokemon.evolution2[1])
             secondEvolname.text = pokemon.evolution2[2].capitalizedString
+            
         }
         
         if one == true && two == false{
             // set only first pokemon
             twoEvolution.hidden = true
             oneEvolution.hidden = false
+            nextEvolution.hidden = false
+            nextEvolution.image = UIImage(named: pokemon.evolutions[1])
+            print()
+            nextEvolutionName.text = pokemon.evolutions[2].capitalizedString
         }
         
         if !one && !two{

@@ -24,7 +24,7 @@ class Pokemon {
     private var _height: String!
     private var _attack: String!
     private var _defense: String!
-    private var _description: String!
+    private var _description = ""
     private var _type1: String!
     private var _type2 =  ""
     private var _evolutionID = ""
@@ -88,8 +88,6 @@ class Pokemon {
     
     // Downloading data from internet using POKEAPI
     
-    
-    
     func downloadPokemonDetails(completed: (poop: String) -> ()){
         
         // SETTING URL
@@ -125,52 +123,37 @@ class Pokemon {
                     self._type1 = ""
                     self._type2 = ""
                 }
-                
-                
                 if let descArr = dict["descriptions"] as? [Dictionary<String, String>] where descArr.count > 0 {
                     if let url = descArr[0]["resource_uri"]{
                         let nsurl = NSURL(string: "\(URL_BASE)\(url)")!
                         Alamofire.request(.GET, nsurl).responseJSON{ response in
                             let descResult = response.result
-                            
                             if let descDict = descResult.value as? Dictionary<String, AnyObject> {
-                                
                                 if let description = descDict["description"] as? String{
+                                    print(description)
                                     self._description = description
                                 }
                             }
-                            
+                            completed(poop: "hi")
                         }
                     }
                 }
-                
-                
                 if let evolutions = dict["evolutions"] as? [Dictionary<String, AnyObject>]
                     where evolutions.count > 0 {
                         if let to = evolutions[0]["to"] as? String{
-                            
-                            
                             if to.rangeOfString("mega") == nil{
-                                
                                 if let uri = evolutions[0]["resource_uri"] as? String {
                                     let newStr = uri.stringByReplacingOccurrencesOfString("/api/v1/pokemon/", withString: "")
                                     let num = newStr.stringByReplacingOccurrencesOfString("/", withString: "")
-                                    
                                     self._evolutionID = num
                                     self._evolutionName = to
-                                    
                                     if let lvl = evolutions[0]["level"] as? Int{
                                         self._evolutionLvl = String(lvl)
-                                        
-                                        
                                     }
-                                    
                                     let newPoke = "\(URL_BASE)\(uri)"
-                                    
                                     print(newPoke)
                                     Alamofire.request(.GET, NSURL(string: newPoke)!).responseJSON {
                                         response in
-                                        
                                         let result = response.result
                                         if let dict = result.value as? Dictionary<String, AnyObject>{
                                             if let evolution2 = dict["evolutions"] as? [Dictionary<String, AnyObject>] where evolution2.count > 0{
@@ -186,30 +169,18 @@ class Pokemon {
                                                             if let lvl = evolution2[0]["level"] as? Int{
                                                                 self._evolutionLvl2 = String(lvl)
                                                             }
-                                                            
                                                         }
-                                                        
                                                     }
-                                                    
                                                 }
                                             }
-
                                         }
                                     }
-                                    
                                 }
-                                
                             }
                         }
+                    }
                 }
-
-            }
             
-            
-            
-            completed(poop: "hi")
         }
-        
     }
- 
 }

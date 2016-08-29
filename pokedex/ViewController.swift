@@ -92,10 +92,12 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         presentViewController(alert, animated: true, completion: nil)
         
         poke.downloadPokemonDetails { (poop) in
-            alert.dismissViewControllerAnimated(true, completion: {
-                self.performSegueWithIdentifier("PokemonDetailVC", sender: poke)
-
-            })
+            
+                            alert.dismissViewControllerAnimated(true, completion: {
+                    self.performSegueWithIdentifier("PokemonDetailVC", sender: poke)
+                    print(poop)
+                })
+            
             
             
         }
